@@ -20,19 +20,6 @@ spec:
       defaultReplicaCount: 1
     service:
       ui:
-        type: LoadBalancer
+        type: ClusterIP
     longhornUI:
       replicas: 1
-  postRenderers:
-    - kustomize:
-        patches:
-          - target:
-              kind: Service
-              name: longhorn-frontend
-            patch: |
-              apiVersion: v1
-              kind: Service
-              metadata:
-                name: longhorn-frontend
-                annotations:
-                  io.cilium/lb-ipam-ips: "192.168.1.192"

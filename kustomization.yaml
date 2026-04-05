@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - flux-system
   - infrastructure/cert-manager
+  - infrastructure/traefik
   - infrastructure/longhorn
   - infrastructure/authentik
   - apps/jellyfin

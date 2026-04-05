@@ -1,0 +1,42 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: traefik
+  namespace: traefik
+spec:
+  interval: 30m
+  timeout: 10m
+  chart:
+    spec:
+      chart: traefik
+      version: "34.*"
+      sourceRef:
+        kind: HelmRepository
+        name: traefik
+      interval: 1h
+  values:
+    deployment:
+      replicas: 1
+    service:
+      annotations:
+        io.cilium/lb-ipam-ips: "192.168.1.192"
+    ports:
+      web:
+        port: 8000
+        exposedPort: 80
+        protocol: TCP
+      websecure:
+        port: 8443
+        exposedPort: 443
+        protocol: TCP
+        tls:
+          enabled: false
+    providers:
+      kubernetesCRD:
+        enabled: true
+        allowCrossNamespace: true
+      kubernetesIngress:
+        enabled: true
+    ingressRoute:
+      dashboard:
+        enabled: false
