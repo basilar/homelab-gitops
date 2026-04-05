@@ -25,8 +25,11 @@ spec:
         port: 8000
         exposedPort: 80
         protocol: TCP
-        redirectTo:
-          port: websecure
+        http:
+          redirections:
+            entryPoint:
+              to: websecure
+              scheme: https
       websecure:
         port: 8443
         exposedPort: 443
