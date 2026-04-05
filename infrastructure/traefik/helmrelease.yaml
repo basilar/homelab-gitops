@@ -25,12 +25,14 @@ spec:
         port: 8000
         exposedPort: 80
         protocol: TCP
+        redirectTo:
+          port: websecure
       websecure:
         port: 8443
         exposedPort: 443
         protocol: TCP
         tls:
-          enabled: false
+          enabled: true
     providers:
       kubernetesCRD:
         enabled: true

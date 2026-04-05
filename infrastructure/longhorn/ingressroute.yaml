@@ -5,10 +5,12 @@ metadata:
   namespace: longhorn-system
 spec:
   entryPoints:
-    - web
+    - websecure
   routes:
-    - match: PathPrefix(`/`)
+    - match: Host(`longhorn.basilar.local`)
       kind: Rule
       services:
         - name: longhorn-frontend
           port: 80
+  tls:
+    secretName: longhorn-tls
