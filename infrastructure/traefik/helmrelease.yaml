@@ -6,9 +6,9 @@ metadata:
 spec:
   interval: 30m
   install:
-    crds: CreateReplace      # create CRDs on install
+    crds: CreateReplace
   upgrade:
-    crds: CreateReplace      # also update CRDs on upgrade ← this is the key
+    crds: CreateReplace
   timeout: 10m
   chart:
     spec:
@@ -38,8 +38,7 @@ spec:
         port: 8443
         exposedPort: 443
         protocol: TCP
-        tls:
-          enabled: true
+        # tls block removed — websecure is TLS-enabled by default in Traefik v3
     providers:
       kubernetesCRD:
         enabled: true
