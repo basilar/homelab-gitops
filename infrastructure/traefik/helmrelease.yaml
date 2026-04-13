@@ -5,11 +5,15 @@ metadata:
   namespace: traefik
 spec:
   interval: 30m
+  install:
+    crds: CreateReplace      # create CRDs on install
+  upgrade:
+    crds: CreateReplace      # also update CRDs on upgrade ← this is the key
   timeout: 10m
   chart:
     spec:
       chart: traefik
-      version: "34.*"
+      version: "39.*"
       sourceRef:
         kind: HelmRepository
         name: traefik
