@@ -8,3 +8,4 @@ resources:
   - infrastructure/authentik
   - apps/jellyfin
   - apps/home-assistant
+  - apps/yayog-web-app

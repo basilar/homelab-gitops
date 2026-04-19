@@ -1,0 +1,17 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: yayog-web-app
+  namespace: flux-system
+spec:
+  interval: 5m
+  retryInterval: 2m
+  timeout: 5m
+  path: ./deploy/flux
+  prune: true
+  wait: true
+  sourceRef:
+    kind: GitRepository
+    name: yayog-web-app
+  targetNamespace: yayog
