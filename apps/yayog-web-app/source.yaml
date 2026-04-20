@@ -6,6 +6,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 1m
+  timeout: 5m
   url: https://github.com/basilar/yayog-web-app
   ref:
     branch: main
