@@ -6,7 +6,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 1m
-  url: ssh://git@github.com/basilar/yayog-web-app
+  url: ssh://git@ssh.github.com:443/basilar/yayog-web-app
   ref:
     branch: main
   secretRef:
