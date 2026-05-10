@@ -77,3 +77,11 @@ spec:
             gnetId: 17347
             revision: 9
             datasource: Prometheus
+          flux-cluster:
+            gnetId: 16713
+            revision: 3
+            datasource: Prometheus
+          flux-control-plane:
+            gnetId: 16714
+            revision: 1
+            datasource: Prometheus
