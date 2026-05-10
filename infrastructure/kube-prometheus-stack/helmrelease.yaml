@@ -24,6 +24,18 @@ spec:
   values:
     crds:
       enabled: true
+    # Talos binds controller-manager/scheduler to 127.0.0.1 and etcd to its
+    # loopback peer for security; kube-proxy doesn't run because Cilium
+    # provides kubeProxyReplacement. Disable the corresponding scrape jobs to
+    # avoid permanent TargetDown / KubeXxxDown alerts.
+    kubeControllerManager:
+      enabled: false
+    kubeScheduler:
+      enabled: false
+    kubeProxy:
+      enabled: false
+    kubeEtcd:
+      enabled: false
     prometheus:
       prometheusSpec:
         retention: 30d
