@@ -36,6 +36,7 @@ spec:
           - alertmanager.basilar.local
           - longhorn.basilar.local
           - yayog.basilar.local
+          - jellyfin.basilar.local
     config:
       modules:
         # http_2xx with insecure_skip_verify because endpoints use the internal

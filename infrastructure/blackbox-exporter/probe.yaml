@@ -19,3 +19,4 @@ spec:
         - https://alertmanager.basilar.local
         - https://longhorn.basilar.local
         - https://yayog.basilar.local
+        - https://jellyfin.basilar.local

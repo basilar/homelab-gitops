@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: jellyfin-tls
+  namespace: jellyfin
+spec:
+  secretName: jellyfin-tls
+  duration: 8760h
+  renewBefore: 720h
+  issuerRef:
+    name: basilar-ca
+    kind: ClusterIssuer
+  dnsNames:
+    - jellyfin.basilar.local
