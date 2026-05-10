@@ -86,13 +86,14 @@ spec:
             gnetId: 17347
             revision: 9
             datasource: Prometheus
+          # Official Flux dashboards from fluxcd/flux2-monitoring-example —
+          # not on grafana.com (gnetId 16713 is Roxy-WI; 16714 queries the old
+          # gotk_reconcile_condition metric which our CRS config doesn't emit).
           flux-cluster:
-            gnetId: 16713
-            revision: 3
+            url: https://raw.githubusercontent.com/fluxcd/flux2-monitoring-example/main/monitoring/configs/dashboards/cluster.json
             datasource: Prometheus
           flux-control-plane:
-            gnetId: 16714
-            revision: 1
+            url: https://raw.githubusercontent.com/fluxcd/flux2-monitoring-example/main/monitoring/configs/dashboards/control-plane.json
             datasource: Prometheus
           cert-manager:
             gnetId: 11001
