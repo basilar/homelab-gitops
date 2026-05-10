@@ -45,6 +45,11 @@ spec:
                   storage: 5Gi
     grafana:
       replicas: 1
+      # RWO Longhorn PVC + multi-node cluster: rolling upgrades deadlock when the
+      # new pod lands on a different node than the volume. Recreate kills the old
+      # pod (and detaches the volume) before starting the new one.
+      deploymentStrategy:
+        type: Recreate
       persistence:
         enabled: true
         type: pvc
