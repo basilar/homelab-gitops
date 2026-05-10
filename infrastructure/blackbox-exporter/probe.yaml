@@ -1,0 +1,21 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: basilar-https
+  namespace: monitoring
+spec:
+  interval: 30s
+  scrapeTimeout: 10s
+  jobName: blackbox-https
+  module: http_2xx_basilar
+  prober:
+    url: blackbox-exporter-prometheus-blackbox-exporter:9115
+    scheme: http
+  targets:
+    staticConfig:
+      static:
+        - https://prometheus.basilar.local
+        - https://grafana.basilar.local
+        - https://alertmanager.basilar.local
+        - https://longhorn.basilar.local
+        - https://yayog.basilar.local

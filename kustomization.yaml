@@ -6,6 +6,7 @@ resources:
   - infrastructure/traefik
   - infrastructure/longhorn
   - infrastructure/kube-prometheus-stack
+  - infrastructure/blackbox-exporter
   - infrastructure/authentik
   - apps/jellyfin
   - apps/home-assistant
