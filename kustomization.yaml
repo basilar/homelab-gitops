@@ -7,6 +7,7 @@ resources:
   - infrastructure/longhorn
   - infrastructure/kube-prometheus-stack
   - infrastructure/blackbox-exporter
+  - infrastructure/nfs-diskstation
   - infrastructure/authentik
   - apps/jellyfin
   - apps/home-assistant
