@@ -53,3 +53,22 @@ spec:
         size: 10Gi
       service:
         type: ClusterIP
+      defaultDashboardsTimezone: browser
+      dashboardProviders:
+        dashboardproviders.yaml:
+          apiVersion: 1
+          providers:
+            - name: default
+              orgId: 1
+              folder: ""
+              type: file
+              disableDeletion: false
+              editable: true
+              options:
+                path: /var/lib/grafana/dashboards/default
+      dashboards:
+        default:
+          traefik:
+            gnetId: 17347
+            revision: 9
+            datasource: Prometheus
