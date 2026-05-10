@@ -20,6 +20,10 @@ spec:
       prometheusSpec:
         retention: 30d
         replicas: 1
+        serviceMonitorSelectorNilUsesHelmValues: false
+        podMonitorSelectorNilUsesHelmValues: false
+        probeSelectorNilUsesHelmValues: false
+        ruleSelectorNilUsesHelmValues: false
         storageSpec:
           volumeClaimTemplate:
             spec:
