@@ -107,6 +107,14 @@ spec:
             gnetId: 7587
             revision: 3
             datasource: Prometheus
+          # Cilium ships version-matched dashboards in-repo; pinned to v1.19.2
+          # to match the chart version installed by terraform/modules/cilium.
+          cilium-agent:
+            url: https://raw.githubusercontent.com/cilium/cilium/v1.19.2/install/kubernetes/cilium/files/cilium-agent/dashboards/cilium-dashboard.json
+            datasource: Prometheus
+          cilium-operator:
+            url: https://raw.githubusercontent.com/cilium/cilium/v1.19.2/install/kubernetes/cilium/files/cilium-operator/dashboards/cilium-operator-dashboard.json
+            datasource: Prometheus
     # Flux2 dashboards (16713/16714) query gotk_resource_info, which is not
     # emitted by the controllers themselves — it comes from kube-state-metrics
     # via CustomResourceStateMetrics mapping Flux CRD .status.conditions to
