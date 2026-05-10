@@ -103,6 +103,10 @@ spec:
             gnetId: 16888
             revision: 11
             datasource: Prometheus
+          blackbox-exporter:
+            gnetId: 7587
+            revision: 3
+            datasource: Prometheus
     # Flux2 dashboards (16713/16714) query gotk_resource_info, which is not
     # emitted by the controllers themselves — it comes from kube-state-metrics
     # via CustomResourceStateMetrics mapping Flux CRD .status.conditions to
