@@ -16,3 +16,25 @@ spec:
   nfs:
     server: ds.basilar.local
     path: /volume1/talos.nfs
+---
+# Litestream replica target for met-to-wg. Lives under a dedicated subpath
+# so it doesn't collide with other NFS consumers (e.g. jellyfin-media,
+# which binds the wider nfs-diskstation-talos PV above).
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs-diskstation-met-to-wg
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: nfs-diskstation
+  mountOptions:
+    - nfsvers=3
+    - tcp
+    - resvport
+  nfs:
+    server: ds.basilar.local
+    path: /volume1/talos.nfs/met-to-wg

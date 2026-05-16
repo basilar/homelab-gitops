@@ -12,3 +12,4 @@ resources:
   - apps/jellyfin
   - apps/home-assistant
   - apps/yayog-web-app
+  - apps/met-to-wg
