@@ -1,0 +1,8 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: met-to-wg
+  labels:
+    app.kubernetes.io/name: met-to-wg
+    app.kubernetes.io/part-of: met-to-wg
