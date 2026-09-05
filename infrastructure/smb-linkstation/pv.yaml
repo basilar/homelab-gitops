@@ -1,0 +1,59 @@
+# Media share on the Buffalo LinkStation (ls.basilar.local / 192.168.1.2).
+#
+# Three hard constraints were verified empirically against this exact
+# server from a privileged pod on the control-plane node:
+#
+# 1. SMB1 ONLY. An SMB2 NEGOTIATE is refused outright; `vers=2.0` and
+#    dialect auto-negotiation both fail with "Server abruptly closed the
+#    connection". `vers=1.0` works, and the Talos kernel permits it because
+#    it is built with CONFIG_CIFS_ALLOW_INSECURE_LEGACY=y (6.18.18-talos).
+#
+# 2. `ip=` IS MANDATORY -- do not remove it. Mounting by hostname alone
+#    fails with "mount error(111) ... Unable to find suitable address" even
+#    though DNS resolves correctly in the pod. The in-kernel cifs client
+#    resolves hostnames through a `dns_resolver` keyring upcall that needs
+#    /sbin/request-key, which Talos does not ship (see siderolabs/talos
+#    issue #11389). Pinning the address bypasses the upcall entirely. The
+#    hostname is kept in `source` so `df` output stays readable.
+#
+# 3. Ownership must be supplied by the client. CONFIG_CIFS_POSIX is not set
+#    in the Talos kernel, so the server returns no POSIX metadata; the
+#    uid/gid/file_mode/dir_mode options below provide it. Jellyfin's
+#    container runs as uid 0, so root ownership is what it expects.
+#
+# Capacity is informational only -- static CSI PVs are not size-enforced.
+# The share is ~917Gi and currently ~100% full (~5.6Gi free).
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: smb-linkstation-media
+spec:
+  capacity:
+    storage: 1Ti
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: smb-linkstation
+  mountOptions:
+    - vers=1.0
+    - ip=192.168.1.2
+    - uid=0
+    - gid=0
+    - file_mode=0777
+    - dir_mode=0777
+    # 2006-era Buffalo firmware does not hand out reliably unique server
+    # inode numbers; let the client synthesise them so Jellyfin's library
+    # scans do not collide on duplicate inodes.
+    - noserverino
+    # Cut metadata round-trips against a slow, nearly-full NAS.
+    - actimeo=30
+  csi:
+    driver: smb.csi.k8s.io
+    readOnly: false
+    # Must be unique cluster-wide and stable; changing it orphans the volume.
+    volumeHandle: smb-linkstation-media
+    volumeAttributes:
+      source: //ls.basilar.local/media
+    nodeStageSecretRef:
+      name: smb-media-creds
+      namespace: jellyfin

@@ -8,7 +8,9 @@ resources:
   - infrastructure/kube-prometheus-stack
   - infrastructure/blackbox-exporter
   - infrastructure/metrics-server
+  - infrastructure/csi-driver-smb
   - infrastructure/nfs-diskstation
+  - infrastructure/smb-linkstation
   - infrastructure/authentik
   - apps/jellyfin
   - apps/home-assistant

@@ -24,3 +24,20 @@ spec:
   resources:
     requests:
       storage: 10Gi
+---
+# Binds the static SMB PV for the LinkStation media share. Statically bound
+# via volumeName; the `smb-linkstation` StorageClass is a label only, there
+# is no SC object (same convention as the nfs-diskstation PVs).
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jellyfin-media-smb
+  namespace: jellyfin
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: smb-linkstation
+  volumeName: smb-linkstation-media
+  resources:
+    requests:
+      storage: 1Ti

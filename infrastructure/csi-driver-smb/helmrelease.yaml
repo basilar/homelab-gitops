@@ -1,0 +1,43 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: csi-driver-smb
+  namespace: kube-system
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: csi-driver-smb
+      version: "1.20.*"
+      sourceRef:
+        kind: HelmRepository
+        name: csi-driver-smb
+        namespace: kube-system
+      interval: 1h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      strategy: rollback
+      retries: 3
+  values:
+    # Talos ships cifs/smb3 built into the kernel (confirmed in
+    # /proc/filesystems on both nodes), and mount.cifs lives inside the
+    # smbplugin image -- so no Talos system extension is required. The node
+    # DaemonSet does need the host mount namespace, which is why this
+    # release lives in kube-system: Talos exempts only that namespace from
+    # the cluster-wide `enforce: baseline` PodSecurity default.
+    linux:
+      enabled: true
+      kubelet: /var/lib/kubelet
+    windows:
+      enabled: false
+    controller:
+      replicas: 1
+      # Two-node cluster with a schedulable control plane; let the single
+      # controller land on either node rather than only the worker.
+      runOnControlPlane: true
+    node:
+      logLevel: 2
