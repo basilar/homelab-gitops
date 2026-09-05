@@ -55,6 +55,15 @@ spec:
     alertmanager:
       alertmanagerSpec:
         replicas: 1
+        # Mounted by the operator at
+        # /etc/alertmanager/secrets/alertmanager-slack/webhook-url and read
+        # via global.slack_api_url_file below. Keeps the webhook URL out of
+        # git *and* out of the rendered Helm values, unlike an inline
+        # slack_api_url. Verified that operator v0.83.0 round-trips
+        # slack_api_url_file rather than stripping it when it regenerates
+        # the alertmanager config secret.
+        secrets:
+          - alertmanager-slack
         storage:
           volumeClaimTemplate:
             spec:
@@ -63,6 +72,61 @@ spec:
               resources:
                 requests:
                   storage: 5Gi
+      # Setting `config` replaces the chart's default wholesale, so the
+      # inhibit_rules below are carried over from those defaults on purpose:
+      # without them a critical alert and its warning/info twins all notify.
+      # alertmanager.tplConfig is false (chart default), so the Go templates
+      # in title/text reach Alertmanager verbatim instead of being evaluated
+      # by Helm.
+      config:
+        global:
+          resolve_timeout: 5m
+          slack_api_url_file: /etc/alertmanager/secrets/alertmanager-slack/webhook-url
+        route:
+          group_by: ["alertname", "namespace"]
+          group_wait: 30s
+          group_interval: 5m
+          repeat_interval: 12h
+          receiver: slack
+          routes:
+            # Deadman switch + inhibitor plumbing: never notify.
+            - receiver: "null"
+              matchers:
+                - alertname =~ "Watchdog|InfoInhibitor"
+            # info-severity alerts are dashboard material, not Slack material
+            # (e.g. CPUThrottlingHigh). They stay visible in Prometheus.
+            - receiver: "null"
+              matchers:
+                - severity = "info"
+        receivers:
+          - name: "null"
+          - name: slack
+            slack_configs:
+              - channel: "#alerts"
+                send_resolved: true
+                title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] {{ .CommonLabels.alertname }}'
+                text: |-
+                  {{ range .Alerts }}*{{ .Labels.severity | toUpper }}*{{ if .Labels.namespace }} in `{{ .Labels.namespace }}`{{ end }}
+                  {{ if .Annotations.summary }}{{ .Annotations.summary }}
+                  {{ end }}{{ if .Annotations.description }}{{ .Annotations.description }}
+                  {{ end }}{{ if .Annotations.runbook_url }}<{{ .Annotations.runbook_url }}|runbook>
+                  {{ end }}{{ end }}
+        inhibit_rules:
+          - source_matchers:
+              - severity = "critical"
+            target_matchers:
+              - severity =~ "warning|info"
+            equal: ["namespace", "alertname"]
+          - source_matchers:
+              - severity = "warning"
+            target_matchers:
+              - severity = "info"
+            equal: ["namespace", "alertname"]
+          - source_matchers:
+              - alertname = "InfoInhibitor"
+            target_matchers:
+              - severity = "info"
+            equal: ["namespace"]
     grafana:
       replicas: 1
       # RWO Longhorn PVC + multi-node cluster: rolling upgrades deadlock when the
