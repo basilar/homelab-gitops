@@ -5,6 +5,7 @@ resources:
   - secrets/alertmanager-slack.sops.yaml
   - helmrepository.yaml
   - helmrelease.yaml
+  - prometheusrule-smb.yaml
   - certificate.yaml
   - ingressroute.yaml
   - service-alias.yaml

@@ -1,0 +1,39 @@
+# Complements the built-in KubePersistentVolumeFillingUp rule, which already
+# covers the SMB share *filling up*. Nothing built in covers it *vanishing*:
+# if the LinkStation drops off the network the CSI mount goes away, kubelet
+# stops answering NodeGetVolumeStats, and the series simply disappears --
+# which no threshold-based rule can see.
+#
+# Lives here rather than in infrastructure/smb-linkstation/ so it is applied
+# in the same kustomization that creates the `monitoring` namespace; the root
+# kustomization has no dependsOn ordering.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: smb-linkstation
+  namespace: monitoring
+spec:
+  groups:
+    - name: smb-linkstation
+      rules:
+        - alert: SmbMediaVolumeStatsMissing
+          # absent() yields a series only when the selector matches nothing.
+          # Verified against live data: 0 series while healthy, 1 series for a
+          # non-existent PVC.
+          expr: absent(kubelet_volume_stats_capacity_bytes{namespace="jellyfin",persistentvolumeclaim="jellyfin-media-smb"})
+          # 15m rather than 10m: volume stats briefly disappear during a
+          # jellyfin Recreate rollout (RWO config volume forces stop-then-start),
+          # and 15m clears that comfortably without being sluggish.
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: SMB media volume stats missing for jellyfin-media-smb
+            description: >-
+              kubelet has reported no volume stats for
+              jellyfin/jellyfin-media-smb (//ls.basilar.local/media) for 15
+              minutes, meaning the CSI mount is gone or unresponsive -- most
+              likely the LinkStation is powered off or off the LAN. Note this
+              also fires if the jellyfin Deployment is deliberately scaled to
+              0, because the stats are reported by the mounting pod. Check with
+              `kubectl -n jellyfin exec deploy/jellyfin -- df -h /media-smb`.
