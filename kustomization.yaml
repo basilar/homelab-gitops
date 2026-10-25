@@ -10,7 +10,6 @@ resources:
   - infrastructure/metrics-server
   - infrastructure/csi-driver-smb
   - infrastructure/nfs-diskstation
-  - infrastructure/smb-linkstation
   - infrastructure/authentik
   - apps/jellyfin
   - apps/home-assistant

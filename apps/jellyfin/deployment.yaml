@@ -40,9 +40,6 @@ spec:
             - name: media
               mountPath: /media
               readOnly: false
-            - name: media-smb
-              mountPath: /media-smb
-              readOnly: false
           resources:
             requests:
               cpu: 100m
@@ -59,6 +56,3 @@ spec:
         - name: media
           persistentVolumeClaim:
             claimName: jellyfin-media
-        - name: media-smb
-          persistentVolumeClaim:
-            claimName: jellyfin-media-smb
