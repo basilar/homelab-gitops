@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: podspine-books
+  namespace: podspine
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: nfs-diskstation
+  volumeName: nfs-diskstation-audio-books
+  resources:
+    requests:
+      storage: 100Gi
+---
+# SQLite index (holds the capability feed URLs -- losing it rotates every
+# subscribed feed) + per-chapter splits. `full` storage mode keeps a split
+# copy of every chaptered book, so this grows to ~the library size.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: podspine-data
+  namespace: podspine
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 20Gi

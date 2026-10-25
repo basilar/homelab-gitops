@@ -1,0 +1,18 @@
+# Plain HTTP on its own LAN IP rather than Traefik: podcast apps don't
+# trust the private basilar-ca, and feeds must be fetchable by the phone.
+# LAN-only -- the browse UI lists every book's capability URL.
+apiVersion: v1
+kind: Service
+metadata:
+  name: podspine
+  namespace: podspine
+  annotations:
+    io.cilium/lb-ipam-ips: "192.168.1.193"
+spec:
+  type: LoadBalancer
+  selector:
+    app: podspine
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

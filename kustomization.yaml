@@ -12,6 +12,7 @@ resources:
   - infrastructure/nfs-diskstation
   - infrastructure/authentik
   - apps/jellyfin
+  - apps/podspine
   - apps/home-assistant
   - apps/yayog-web-app
   - apps/met-to-wg

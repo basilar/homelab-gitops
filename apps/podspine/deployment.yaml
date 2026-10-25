@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: podspine
+  namespace: podspine
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: podspine
+  template:
+    metadata:
+      labels:
+        app: podspine
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+      containers:
+        - name: podspine
+          image: ghcr.io/schubydoo/podspine:1.9.0
+          # Podspine's library watcher is inotify, which never fires for
+          # files the DiskStation writes over NFS -- only the startup scan
+          # sees new books. Exiting hourly makes kubelet restart the
+          # container in place (no Longhorn re-attach) and rescan; unchanged
+          # books are skipped, so it is cheap.
+          # ponytail: up to 1h until a new book appears and a ~10s feed gap
+          # per restart; swap for a CronJob `rollout restart` if that bites.
+          command: ["timeout", "1h", "/usr/local/bin/podspine"]
+          env:
+            # Feed and audio URLs are built from this; it must be what the
+            # phone reaches (the LB IP in service.yaml).
+            - name: PODSPINE_BASE_URL
+              value: http://192.168.1.193
+          ports:
+            - name: http
+              containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 30
+            failureThreshold: 5
+          volumeMounts:
+            - name: books
+              mountPath: /library
+              readOnly: true
+            - name: data
+              mountPath: /data
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: "2"
+              memory: 1Gi
+      volumes:
+        - name: books
+          persistentVolumeClaim:
+            claimName: podspine-books
+            readOnly: true
+        - name: data
+          persistentVolumeClaim:
+            claimName: podspine-data

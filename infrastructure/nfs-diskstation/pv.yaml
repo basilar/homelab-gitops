@@ -38,3 +38,24 @@ spec:
   nfs:
     server: ds.basilar.local
     path: /volume1/talos.nfs/met-to-wg
+---
+# Audiobook library served by podspine. Dedicated subpath so podspine sees
+# only books (jellyfin also sees it via the wider nfs-diskstation-talos PV).
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs-diskstation-audio-books
+spec:
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: nfs-diskstation
+  mountOptions:
+    - nfsvers=3
+    - tcp
+    - resvport
+  nfs:
+    server: ds.basilar.local
+    path: /volume1/talos.nfs/audio-books
