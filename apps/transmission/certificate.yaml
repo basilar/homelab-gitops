@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: transmission-tls
+  namespace: transmission
+spec:
+  secretName: transmission-tls
+  duration: 8760h
+  renewBefore: 720h
+  issuerRef:
+    name: basilar-ca
+    kind: ClusterIssuer
+  dnsNames:
+    - transmission.basilar.local

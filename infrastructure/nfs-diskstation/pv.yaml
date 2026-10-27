@@ -59,3 +59,26 @@ spec:
   nfs:
     server: ds.basilar.local
     path: /volume1/talos.nfs/audio-books
+---
+# Transmission's view of the share root. A second PV on the same export
+# (jellyfin's PV is already bound); the deployment mounts only the
+# `downloads` subPath, which kubelet creates on first mount, so finished
+# downloads appear to jellyfin at /media/downloads.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs-diskstation-transmission
+spec:
+  capacity:
+    storage: 1Ti
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: nfs-diskstation
+  mountOptions:
+    - nfsvers=3
+    - tcp
+    - resvport
+  nfs:
+    server: ds.basilar.local
+    path: /volume1/talos.nfs

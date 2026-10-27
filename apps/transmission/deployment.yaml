@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transmission
+  namespace: transmission
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: transmission
+  template:
+    metadata:
+      labels:
+        app: transmission
+    spec:
+      containers:
+        - name: transmission
+          image: lscr.io/linuxserver/transmission:4.0.6-r4-ls311
+          env:
+            # Write files as the DiskStation user that owns the rest of the
+            # share, so they stay manageable from the NAS / a Mac.
+            - name: PUID
+              value: "1041"
+            - name: PGID
+              value: "100"
+            # Transmission rejects RPC calls whose Host header isn't
+            # whitelisted (DNS-rebinding guard); this is the Traefik host.
+            - name: HOST_WHITELIST
+              value: transmission.basilar.local
+          ports:
+            - name: http
+              containerPort: 9091
+          readinessProbe:
+            tcpSocket:
+              port: http
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: downloads
+              mountPath: /downloads
+              subPath: downloads
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: "2"
+              memory: 1Gi
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: transmission-config
+        - name: downloads
+          persistentVolumeClaim:
+            claimName: transmission-downloads
