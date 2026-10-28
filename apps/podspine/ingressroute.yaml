@@ -1,0 +1,19 @@
+# HTTPS with the private basilar-ca: the podcast app's device must trust
+# that CA, or feeds fail. LAN-only -- the browse UI lists every book's
+# capability URL.
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: podspine
+  namespace: podspine
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`podspine.basilar.local`)
+      kind: Rule
+      services:
+        - name: podspine
+          port: 8080
+  tls:
+    secretName: podspine-tls

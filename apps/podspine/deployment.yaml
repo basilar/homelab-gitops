@@ -33,9 +33,9 @@ spec:
           command: ["timeout", "1h", "/usr/local/bin/podspine"]
           env:
             # Feed and audio URLs are built from this; it must be what the
-            # phone reaches. Local DNS points this name at the LB IP in service.yaml.
+            # phone reaches (Traefik, see ingressroute.yaml).
             - name: PODSPINE_BASE_URL
-              value: http://podspine.basilar.local
+              value: https://podspine.basilar.local
           ports:
             - name: http
               containerPort: 8080
