@@ -39,14 +39,18 @@ spec:
           ports:
             - name: http
               containerPort: 8080
+          # /healthz answers slowly while ffmpeg splits a book; the default
+          # 1s timeout flapped readiness and could kill a long first scan.
           readinessProbe:
             httpGet:
               path: /healthz
               port: http
+            timeoutSeconds: 5
           livenessProbe:
             httpGet:
               path: /healthz
               port: http
+            timeoutSeconds: 5
             periodSeconds: 30
             failureThreshold: 5
           volumeMounts:
