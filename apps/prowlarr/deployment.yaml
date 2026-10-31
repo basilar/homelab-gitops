@@ -23,6 +23,11 @@ spec:
               value: "1041"
             - name: PGID
               value: "100"
+            # Trust X-Forwarded-For from the pod network (Traefik). Without
+            # it Prowlarr treats every proxied request as an unknown client,
+            # so "auth disabled for local addresses" never applies.
+            - name: PROWLARR__SERVER__TRUSTEDNETWORKS
+              value: 10.244.0.0/16
           ports:
             - name: http
               containerPort: 9696
