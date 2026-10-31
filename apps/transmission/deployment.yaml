@@ -26,9 +26,10 @@ spec:
             - name: PGID
               value: "100"
             # Transmission rejects RPC calls whose Host header isn't
-            # whitelisted (DNS-rebinding guard); this is the Traefik host.
+            # whitelisted (DNS-rebinding guard): the Traefik host, plus the
+            # in-cluster Service name Prowlarr uses to hand off torrents.
             - name: HOST_WHITELIST
-              value: transmission.basilar.local
+              value: transmission.basilar.local,transmission.transmission.svc.cluster.local
           ports:
             - name: http
               containerPort: 9091

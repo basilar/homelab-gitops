@@ -1,0 +1,14 @@
+# Prowlarr's SQLite DB holds everything set in the UI (indexers, the
+# Transmission download client, auth) -- keep it on Longhorn, not NFS.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: prowlarr-config
+  namespace: prowlarr
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 1Gi
