@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: calibre
+  namespace: calibre
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: calibre
+  template:
+    metadata:
+      labels:
+        app: calibre
+    spec:
+      containers:
+        - name: calibre
+          image: crocodilestick/calibre-web-automated:v4.0.8
+          env:
+            - name: PUID
+              value: "1041"
+            - name: PGID
+              value: "100"
+            # The inbox is NFS, where inotify never sees files the NAS
+            # writes; poll instead. NETWORK_SHARE_MODE is deliberately off:
+            # the library and app.db are on Longhorn and keep SQLite WAL.
+            - name: CWA_WATCH_MODE
+              value: poll
+          ports:
+            - name: http
+              containerPort: 8083
+          readinessProbe:
+            tcpSocket:
+              port: http
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: library
+              mountPath: /calibre-library
+            - name: inbox
+              mountPath: /cwa-book-ingest
+              subPath: ebooks-inbox
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              # Book conversion runs Calibre's ebook-convert.
+              cpu: "2"
+              memory: 2Gi
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: calibre-config
+        - name: library
+          persistentVolumeClaim:
+            claimName: calibre-library
+        - name: inbox
+          persistentVolumeClaim:
+            claimName: calibre-inbox

@@ -1,0 +1,42 @@
+# The Calibre library (book files + metadata.db, SQLite) -- on Longhorn, not
+# NFS, so SQLite keeps reliable locking. This volume IS the library: back it up.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: calibre-library
+  namespace: calibre
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 20Gi
+---
+# CWA settings and users (app.db), plus originals of converted books.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: calibre-config
+  namespace: calibre
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: calibre-inbox
+  namespace: calibre
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: nfs-diskstation
+  volumeName: nfs-diskstation-calibre
+  resources:
+    requests:
+      storage: 1Ti

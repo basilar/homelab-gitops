@@ -82,3 +82,25 @@ spec:
   nfs:
     server: ds.basilar.local
     path: /volume1/talos.nfs
+---
+# Calibre-Web Automated's view of the share root. The deployment mounts only
+# the `ebooks-inbox` subPath (kubelet creates it on first mount) as CWA's
+# ingest folder. CWA DELETES files from it after importing them.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs-diskstation-calibre
+spec:
+  capacity:
+    storage: 1Ti
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: nfs-diskstation
+  mountOptions:
+    - nfsvers=3
+    - tcp
+    - resvport
+  nfs:
+    server: ds.basilar.local
+    path: /volume1/talos.nfs
