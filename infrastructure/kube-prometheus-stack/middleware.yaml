@@ -1,0 +1,18 @@
+# Defence in depth for the unauthenticated Prometheus and Alertmanager
+# UIs: only accept connections whose source address is private (RFC1918).
+# This is NOT authentication -- anyone on the LAN still gets in. Grafana
+# has its own login but is covered too, so nothing here is reachable from
+# a public source address if the LB IP is ever port-forwarded.
+#
+# ipAllowList checks the TCP source address, not X-Forwarded-For.
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: lan-only
+  namespace: monitoring
+spec:
+  ipAllowList:
+    sourceRange:
+      - 10.0.0.0/8
+      - 172.16.0.0/12
+      - 192.168.0.0/16

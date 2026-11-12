@@ -6,5 +6,6 @@ resources:
   - helmrepository.yaml
   - helmrelease.yaml
   - certificate.yaml
+  - middleware.yaml
   - ingressroute.yaml
   - service-alias.yaml
