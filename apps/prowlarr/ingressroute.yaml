@@ -9,6 +9,8 @@ spec:
   routes:
     - match: Host(`prowlarr.basilar.local`)
       kind: Rule
+      middlewares:
+        - name: lan-only
       services:
         - name: prowlarr
           port: 9696

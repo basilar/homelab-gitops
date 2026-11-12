@@ -9,6 +9,8 @@ spec:
   routes:
     - match: Host(`longhorn.basilar.local`)
       kind: Rule
+      middlewares:
+        - name: lan-only
       services:
         - name: longhorn-frontend
           port: 80

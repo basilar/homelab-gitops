@@ -9,6 +9,8 @@ spec:
   routes:
     - match: Host(`prometheus.basilar.local`)
       kind: Rule
+      middlewares:
+        - name: lan-only
       services:
         - name: kube-prometheus-stack-prometheus
           port: 9090
@@ -26,6 +28,8 @@ spec:
   routes:
     - match: Host(`grafana.basilar.local`)
       kind: Rule
+      middlewares:
+        - name: lan-only
       services:
         - name: kube-prometheus-stack-grafana
           port: 80
@@ -43,6 +47,8 @@ spec:
   routes:
     - match: Host(`alertmanager.basilar.local`)
       kind: Rule
+      middlewares:
+        - name: lan-only
       services:
         - name: kube-prometheus-stack-alertmanager
           port: 9093
