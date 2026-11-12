@@ -1,0 +1,23 @@
+# Cluster access and key material -- never commit these.
+kubeconfig
+*.kubeconfig
+talosconfig
+*.age
+*.agekey
+age.key
+keys.txt
+*.pem
+*.key
+
+# Decrypted SOPS output / scratch secrets. Encrypted files must be named
+# *.sops.yaml (see .sops.yaml) so they stay tracked.
+*.dec.yaml
+*.dec.yml
+*.secret.yaml
+*.secret.yml
+*.decrypted.*
+
+# Editor / OS noise
+.DS_Store
+.idea/
+.vscode/
